@@ -7,7 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	logger_util "github.com/free5gc/util/logger"
+	logger_util "github.com/machi12/util/logger"
 )
 
 const (
