@@ -95,10 +95,9 @@ func milenageF1(opc, k, _rand, sqn, amf, mac_a, mac_s []uint8) error {
  * @_rand: RAND = 128-bit random challenge
  * @amf: AMF = 16-bit authentication management field
  * @mac_a: Buffer for MAC-A = 64-bit network authentication code (f1), or %NULL
- * @ak: Buffer for AK = 64-bit anonymity key (f1*), or %NULL
  * Returns: 0 on success, -1 on failure
  */
-func milenageF1_New(opc, k, _rand, mac_a, ak []uint8) error {
+func milenageF1_New(opc, k, _rand, mac_a []uint8) error {
 	tmp2, tmp3 := make([]uint8, 16), make([]uint8, 16)
 	// var tmp1, tmp2, tmp3 [16]uint8
 
@@ -157,10 +156,6 @@ func milenageF1_New(opc, k, _rand, mac_a, ak []uint8) error {
 	// fmt.Printf("tmp1[i] ^= opc[i] %x\n", tmp1)
 	if mac_a != nil {
 		copy(mac_a[0:], tmp1[0:8])
-	}
-
-	if ak != nil {
-		copy(ak[0:], tmp1[8:16])
 	}
 
 	return nil
@@ -330,9 +325,10 @@ func milenageF2345(opc, k, _rand, res, ck, ik, ak, akstar []uint8) error {
  * @res: Buffer for RES = 64-bit signed response (f2), or %NULL
  * @ck: Buffer for CK = 128-bit confidentiality key (f3), or %NULL
  * @ik: Buffer for IK = 128-bit integrity key (f4), or %NULL
+ * @ak: Buffer for AK = 48-bit anonymity key (f5), or %NULL
  * Returns: 0 on success, -1 on failure
  */
-func milenageF2345_New(opc, k, _rand, res, ck, ik []uint8) error {
+func milenageF2345_New(opc, k, _rand, res, ck, ik, ak []uint8) error {
 	tmp1 := make([]uint8, 16)
 
 	/* tmp2 = TEMP = E_K(RAND XOR OP_C) */
@@ -377,9 +373,9 @@ func milenageF2345_New(opc, k, _rand, res, ck, ik []uint8) error {
 		copy(res[0:], tmp3[8:16]) // f2
 	}
 
-	//if ak != nil {
-	//	copy(ak[0:], tmp3[0:6]) // f5
-	//}
+	if ak != nil {
+		copy(ak[0:], tmp3[0:8]) // f5
+	}
 	/*
 		if (aes_128_encrypt_block(k, tmp1, tmp3))
 			return -1;
@@ -744,7 +740,7 @@ func F1(opc, k, _rand, sqn, amf, mac_a, mac_s []uint8) error {
 
 // NOTE: 新增
 func F1_New(opc, k, _rand, mac_a, ak []uint8) error {
-	return milenageF1_New(opc, k, _rand, mac_a, ak)
+	return milenageF1_New(opc, k, _rand, mac_a)
 }
 
 func F2345(opc, k, _rand, res, ck, ik, ak, akstar []uint8) error {
@@ -752,8 +748,8 @@ func F2345(opc, k, _rand, res, ck, ik, ak, akstar []uint8) error {
 }
 
 // NOTE: 新增
-func F2345_New(opc, k, _rand, res, ck, ik []uint8) error {
-	return milenageF2345_New(opc, k, _rand, res, ck, ik)
+func F2345_New(opc, k, _rand, res, ck, ik, ak []uint8) error {
+	return milenageF2345_New(opc, k, _rand, res, ck, ik, ak)
 }
 
 func GenerateOPC(k, op []uint8) ([]uint8, error) {
