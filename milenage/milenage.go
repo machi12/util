@@ -739,7 +739,7 @@ func F1(opc, k, _rand, sqn, amf, mac_a, mac_s []uint8) error {
 }
 
 // NOTE: 新增
-func F1_New(opc, k, _rand, mac_a, ak []uint8) error {
+func F1_New(opc, k, _rand, mac_a []uint8) error {
 	return milenageF1_New(opc, k, _rand, mac_a)
 }
 
